@@ -6,7 +6,7 @@ orbs:
 executors:
   node14:
     docker:
-      - image: 'cimg/node:14.17.0 '
+     - image: cimg/node:lts  # Usa la última versión LTS de Node.js
     resource_class: medium
 
 commands:
