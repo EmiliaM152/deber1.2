@@ -4,7 +4,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "test": "mocha --exit",
+    "test:unit": "mocha test/"
     "test:unit": "mocha test/unit", 
     "test:integration": "mocha test/integration", 
      "lint": "eslint . --ext .js",
