@@ -6,7 +6,8 @@
     "start": "node app.js",
     "test": "mocha --exit",
     "coverage": "nyc --reporter=lcov npm run test",
-    "cover": "istanbul cover node_modules/mocha/bin/_mocha --dir ./reports/coverage"
+    "cover": "istanbul cover node_modules/mocha/bin/_mocha --dir ./reports/coverage",
+    "lint": "eslint . --ext .js"  // Agregado el script de linting
   },
   "author": "Alicia <alicia@aliciasykes.com> (http://aliciasykes.com)",
   "license": "ISC",
