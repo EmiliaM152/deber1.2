@@ -32,4 +32,11 @@
     "coverage": "^0.4.1",
     "request": "^2.83.0"
   }
+  "scripts": {
+    "start": "node app.js",
+    "test": "mocha --exit",
+    "coverage": "nyc --reporter=lcov npm run test",
+    "cover": "istanbul cover node_modules/mocha/bin/_mocha --dir ./reports/coverage",
+    "lint": "eslint . --ext .js"  // Aquí está el script de linting
+}
 }
