@@ -6,8 +6,8 @@
     "start": "node app.js",
     "test": "mocha --exit",
     "coverage": "nyc --reporter=lcov npm run test",
-    "cover": "istanbul cover node_modules/mocha/bin/_mocha --dir ./reports/coverage"
-    "lint": "eslint . --ext .js"  // Este es el script faltante
+    "cover": "istanbul cover node_modules/mocha/bin/_mocha --dir ./reports/coverage",
+    "lint": "eslint . --ext .js"
   },
   "author": "Alicia <alicia@aliciasykes.com> (http://aliciasykes.com)",
   "license": "ISC",
@@ -33,5 +33,4 @@
     "coverage": "^0.4.1",
     "request": "^2.83.0"
   }
-
 }
