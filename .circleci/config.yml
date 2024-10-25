@@ -11,40 +11,70 @@ executors:
 
 commands:
   nodesetup:
-    description: checkout, restore cache, save cache, install dependencies
+    description: "Setup del proyecto: Checkout y dependencias"
     steps:
       - checkout
       - node/install-packages:
-         cache-path: ~/project/node_modules
-         app-dir: ~/project/
+          cache-path: ~/project/node_modules
+          app-dir: ~/project/
 
 jobs:
-  build_and_test:
-    executor: 'node14'
+  install_dependencies:
+    executor: node14
+    steps:
+      - nodesetup
+
+  lint:
+    executor: node14
     steps:
       - nodesetup
       - run:
-          name: Test
-          command: |
-            npm run coverage
-      - restore_cache:
-          keys:
-          - v1-result-cache
+          name: Linting del Código
+          command: npm run lint
+
+  test_unit:
+    executor: node14
+    parallelism: 2
+    steps:
+      - nodesetup
       - run:
-          name: Coverage Test
+          name: Pruebas Unitarias
+          command: npm run test:unit
+
+  test_integration:
+    executor: node14
+    steps:
+      - nodesetup
+      - run:
+          name: Pruebas de Integración
+          command: npm run test:integration
+
+  notify:
+    executor: node14
+    steps:
+      - run:
+          name: Notificar Éxito
           command: |
-            mv /tmp/result /tmp/result-moved || true
-            npx lcov-total coverage/lcov.info > /tmp/result
-            chmod u+x coveragetest.sh
-            ./coveragetest.sh
-      - save_cache:
-          paths: coverage
-          key: v1-result-cache
-      - store_artifacts: # Save coverage reports as artifacts 
-          path: coverage
-          prefix: coverage
+            echo "Notificación: El pipeline se completó con éxito"
+            curl -X POST -H "Content-Type: application/json" \
+            -d '{"text": "Pipeline completado exitosamente en workflow: '"${CIRCLE_WORKFLOW_ID}"'"}' \
+            https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK
 
 workflows:
-  node_build_pipeline:
+  version: 2
+
+  main_pipeline:
     jobs:
-      - build_and_test
+      - install_dependencies
+      - lint:
+          requires:
+            - install_dependencies
+      - test_unit:
+          requires:
+            - lint
+      - test_integration:
+          requires:
+            - test_unit
+      - notify:
+          requires:
+            - test_integration
