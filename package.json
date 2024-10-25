@@ -7,6 +7,7 @@
     "test:unit": "mocha test/",
     "test:unit": "mocha 'test/**/*.js'",
     "test:integration": "mocha test/integration", 
+    "test:integration": "mocha 'test/**/*.js'",
      "lint": "eslint . --ext .js",
     "coverage": "nyc --reporter=lcov npm run test",
     "cover": "istanbul cover node_modules/mocha/bin/_mocha --dir ./reports/coverage",
