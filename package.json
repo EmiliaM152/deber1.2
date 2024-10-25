@@ -5,9 +5,14 @@
   "scripts": {
     "start": "node app.js",
     "test": "mocha --exit",
+    "test:unit": "mocha test/unit", 
+    "test:integration": "mocha test/integration",  // <--- Si tienes pruebas de integración
+     "lint": "eslint . --ext .js",
     "coverage": "nyc --reporter=lcov npm run test",
     "cover": "istanbul cover node_modules/mocha/bin/_mocha --dir ./reports/coverage",
     "lint": "eslint . --config eslint.config.mjs"
+     
+
   },
   "author": "Alicia <alicia@aliciasykes.com> (http://aliciasykes.com)",
   "license": "ISC",
