@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node app.js",
     "test:unit": "mocha test/",
-    "test:unit": "mocha test/unit", 
+    "test:unit": "mocha 'test/**/*.js'",
     "test:integration": "mocha test/integration", 
      "lint": "eslint . --ext .js",
     "coverage": "nyc --reporter=lcov npm run test",
