@@ -6,12 +6,12 @@ orbs:
 executors:
   node14:
     docker:
-     - image: cimg/node:lts  # Usa la última versión LTS de Node.js
+      - image: cimg/node:lts  # Usa la última versión LTS de Node.js
     resource_class: medium
 
 commands:
   nodesetup:
-    description: "Setup del proyecto: Checkout y dependencias"
+    description: "Configuración del proyecto: Checkout y dependencias"
     steps:
       - checkout
       - node/install-packages:
@@ -34,7 +34,7 @@ jobs:
 
   test_unit:
     executor: node14
-    parallelism: 2
+    parallelism: 2  # Ejecuta pruebas unitarias en paralelo en dos contenedores
     steps:
       - nodesetup
       - run:
@@ -49,20 +49,32 @@ jobs:
           name: Pruebas de Integración
           command: npm run test:integration
 
-  notify:
+  notify_success:
     executor: node14
     steps:
       - run:
           name: Notificar Éxito
           command: |
-            echo "Notificación: El pipeline se completó con éxito"
+            echo "Pipeline completado con éxito"
             curl -X POST -H "Content-Type: application/json" \
-            -d '{"text": "Pipeline completado exitosamente en workflow: '"${CIRCLE_WORKFLOW_ID}"'"}' \
+            -d '{"text": "Pipeline completado exitosamente en el workflow: '"${CIRCLE_WORKFLOW_ID}"'"}' \
+            https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK
+
+  notify_failure:
+    executor: node14
+    steps:
+      - run:
+          name: Notificar Error
+          command: |
+            echo "El pipeline falló"
+            curl -X POST -H "Content-Type: application/json" \
+            -d '{"text": "El pipeline falló en el workflow: '"${CIRCLE_WORKFLOW_ID}"'"}' \
             https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK
 
 workflows:
   version: 2
 
+  # Primer Workflow: Pipeline Principal
   main_pipeline:
     jobs:
       - install_dependencies
@@ -75,6 +87,23 @@ workflows:
       - test_integration:
           requires:
             - test_unit
-      - notify:
+      - notify_success:
+          requires:
+            - test_integration
+
+  # Segundo Workflow: Notificación de Error
+  notify_workflow:
+    jobs:
+      - install_dependencies
+      - lint:
+          requires:
+            - install_dependencies
+      - test_unit:
+          requires:
+            - lint
+      - test_integration:
+          requires:
+            - test_unit
+      - notify_failure:
           requires:
             - test_integration
